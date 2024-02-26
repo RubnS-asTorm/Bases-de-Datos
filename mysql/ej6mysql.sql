@@ -1,0 +1,186 @@
+DROP DATABASE IF EXISTS bdbConstruccion;
+CREATE DATABASE bdbConstruccion;
+USE bdbConstruccion;
+
+-- -----------------------------------------------------
+-- Table clientes
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS clientes;
+
+CREATE TABLE IF NOT EXISTS clientes (
+  nif VARCHAR(9) NOT NULL,
+  nombre VARCHAR(45) NOT NULL,
+  direccion VARCHAR(255) NOT NULL,
+  telefono VARCHAR(13) NOT NULL,
+  tipo ENUM("particular","empresa") NOT NULL,
+  PRIMARY KEY (nif)
+  );
+
+INSERT INTO clientes VALUES 
+('32456876N','pepe','el quinto pino',987654321,'particular'), 
+('32556236P','azulejosRamirez','el sexto pino',273364666,'empresa')
+;
+
+-- -----------------------------------------------------
+-- Table proxectos
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS proxectos;
+
+CREATE TABLE IF NOT EXISTS proxectos (
+  idProxecto INT(20) NOT NULL AUTO_INCREMENT,
+  nifClientes VARCHAR(9) NOT NULL,
+  descripcion VARCHAR(255) NOT NULL,
+  fechaInicio DATE NOT NULL,
+  fechaFinEstimada DATE NOT NULL,
+  fechaFinReal DATE,
+  PRIMARY KEY (idProxecto),
+  CONSTRAINT FK_PRXCTS_NIF
+    FOREIGN KEY (nifClientes)
+    REFERENCES clientes (nif)
+  );
+
+INSERT INTO proxectos VALUES 
+(NULL,'32456876N','holabuenatarde','2004-12-20','2005-11-30',NULL),
+(NULL,'32556236P','holabuenanoche','2012-03-10','2015-08-21','2015-08-10')
+;
+
+-- -----------------------------------------------------
+-- Table subvencions
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS subvencions;
+
+CREATE TABLE IF NOT EXISTS subvencions (
+  idSubvencion INT(20) NOT NULL AUTO_INCREMENT,
+  tipo ENUM("local","autonomica","estatal") NOT NULL,
+  cuantia DECIMAL(13,2) NOT NULL,
+  idProxecto INT(20),
+  PRIMARY KEY (idSubvencion),
+  CONSTRAINT FK_SBNCN_IDPRXCTS
+    FOREIGN KEY (idProxecto)
+    REFERENCES proxectos (idProxecto)
+    ON DELETE CASCADE
+    ON UPDATE SET NULL
+    );
+
+INSERT INTO subvencions VALUES 
+(NULL,'local','3000','1'),
+(NULL,'estatal','5000','2')
+;
+
+-- -----------------------------------------------------
+-- Table presupuestos
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS presupuestos;
+
+CREATE TABLE IF NOT EXISTS presupuestos (
+  idPresupuesto INT(20) NOT NULL,
+  fecha DATE NOT NULL,
+  aceptado TINYINT(1) NOT NULL,
+  importe DECIMAL(13,2) NOT NULL,
+  descripcion VARCHAR(255) NOT NULL,
+  idProxecto INT(20),
+  PRIMARY KEY (idPresupuesto),
+  CONSTRAINT FK_PRSPTS_IDPRXCTS
+    FOREIGN KEY (idProxecto)
+    REFERENCES proxectos (idProxecto)
+    ON DELETE CASCADE
+    ON UPDATE SET NULL
+    );
+
+INSERT INTO presupuestos VALUES 
+('1','2004-12-31','1','50000','aasdfghjklñ','1'),
+('2','2015-12-31','2','30000','hjsgdshafuh','2')
+;
+
+-- -----------------------------------------------------
+-- Table traballadores
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS traballadores;
+
+CREATE TABLE IF NOT EXISTS traballadores (
+  dni VARCHAR(9) NOT NULL,
+  nombre VARCHAR(45) NOT NULL,
+  direccion VARCHAR(255) NOT NULL,
+  telefono VARCHAR(13) NOT NULL,
+  PRIMARY KEY (dni)
+  );
+
+INSERT INTO traballadores VALUES 
+('32837876Q','Alejandro','Av.JAHSDjsdh','+34987654321'),
+('87482287P','Pepe','Av.frwsjv','+34878338447')
+;
+
+-- -----------------------------------------------------
+-- Table oficios
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS oficios;
+
+CREATE TABLE IF NOT EXISTS oficios (
+  nombreOficio VARCHAR(9) NOT NULL,
+  PRIMARY KEY (nombreOficio)
+  );
+
+#INSERT INTO oficios VALUES 
+#(),
+#()
+#;
+
+-- -----------------------------------------------------
+-- Table traballa
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS traballa;
+
+CREATE TABLE IF NOT EXISTS traballa (
+  idProxecto INT(20) NOT NULL,
+  dni VARCHAR(9) NOT NULL,
+  dataInicio DATE NOT NULL,
+  dataFin DATE,
+  PRIMARY KEY (idProxecto, dni, dataInicio),
+  CONSTRAINT FK_TRBLLA_IDPRXCTS
+    FOREIGN KEY (idProxecto)
+    REFERENCES proxectos (idProxecto)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT FK_TRBLLA_DNITRBLLO
+    FOREIGN KEY (dni)
+    REFERENCES traballadores (dni)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE
+  );
+
+#INSERT INTO traballa VALUES 
+#(),
+#()
+#;
+
+DROP TABLE IF EXISTS calificado_para;
+
+CREATE TABLE IF NOT EXISTS calificado_para (
+  nombreOficio VARCHAR(40) NOT NULL,
+  dni VARCHAR(9) NOT NULL,
+  PRIMARY KEY (nombreOficio, dni),
+  CONSTRAINT FK_CALFCD_OFICIOS
+    FOREIGN KEY (nombreOficio)
+    REFERENCES oficios (nombreOficio)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT FK_CALFCD_DNITRBLLO
+    FOREIGN KEY (dni)
+    REFERENCES traballadores (dni)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE
+  );
+
+#INSERT INTO calificado_para VALUES 
+#(),
+#()
+#;
+
+#select * from presupuestos;
