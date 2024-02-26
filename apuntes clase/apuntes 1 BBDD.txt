@@ -1,0 +1,17 @@
+pc profesor              unireel 4             moodle 
+
+
+172.21.34.100
+
+
+como coger contenido en otro ordenador: 
+1. barra de direcciones: --> \\172.21.34.100
+
+CONTRASEÑA: Abcd1234.
+
+VARCHAR-> CP, TLF, DNI-LETRA (ya que no se realizan operaciones matematicas ) 65535 bytes / 16383 caracteres
+INT/FLOAT-> PESO, ALTURA, NOTA
+DECIMAL-> DINERO ( no se usa para otras cosas debido a que ocupa mucho y las operaciones matemáticas no son lo suficientemente rápidas )
+
+
+
